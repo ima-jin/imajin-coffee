@@ -25,6 +25,11 @@ async function getCoffeePage(handle: string) {
 }
 
 export default async function CoffeePage({ params }: PageProps) {
+  // Skip static file requests that leak through
+  if (params.handle.includes('.') || params.handle === 'favicon') {
+    notFound();
+  }
+
   const page = await getCoffeePage(params.handle);
   
   if (!page) {
