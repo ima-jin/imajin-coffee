@@ -71,10 +71,16 @@ export default function CoffeePage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-full mx-auto mb-4 bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-3xl">
-            🟠
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Support Imajin</h1>
+          <img 
+            src="/images/logo-kanji.svg" 
+            alt="今人" 
+            className="w-24 h-24 mx-auto mb-4"
+          />
+          <img 
+            src="/images/logo.svg" 
+            alt="Imajin" 
+            className="h-10 mx-auto mb-4"
+          />
           <p className="text-gray-500">Sovereign infrastructure. Built in public. Funded by you.</p>
         </div>
 
