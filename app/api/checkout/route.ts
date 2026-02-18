@@ -1,8 +1,7 @@
 /**
  * POST /api/checkout
  * 
- * Creates a Stripe Checkout session for a coffee tip.
- * Simple version - just amount, no database.
+ * Creates a Stripe Checkout session for one-time or recurring support.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,34 +15,77 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3009';
 
 export async function POST(request: NextRequest) {
   try {
-    const { amount } = await request.json();
+    const { amount, recurring, joinMailingList } = await request.json();
 
-    if (!amount || amount < 100) {
+    if (!amount || amount < 500) {
       return NextResponse.json(
-        { error: 'Minimum amount is $1' },
+        { error: 'Minimum amount is $5' },
         { status: 400 }
       );
     }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'Support Imajin',
-            description: 'Thank you for supporting sovereign infrastructure!',
-          },
-          unit_amount: amount,
-        },
-        quantity: 1,
-      }],
-      success_url: `${BASE_URL}/success`,
-      cancel_url: BASE_URL,
-    });
+    const metadata: Record<string, string> = {
+      joinMailingList: joinMailingList ? 'true' : 'false',
+    };
 
-    return NextResponse.json({ url: session.url });
+    if (recurring) {
+      // Create subscription checkout
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Support Imajin (Monthly)',
+              description: 'Monthly support for sovereign infrastructure development',
+            },
+            unit_amount: amount,
+            recurring: {
+              interval: 'month',
+            },
+          },
+          quantity: 1,
+        }],
+        subscription_data: {
+          metadata,
+        },
+        success_url: `${BASE_URL}/success?type=subscription`,
+        cancel_url: BASE_URL,
+        // Collect email for mailing list
+        ...(joinMailingList && {
+          consent_collection: {
+            promotions: 'auto',
+          },
+        }),
+      });
+
+      return NextResponse.json({ url: session.url });
+    } else {
+      // One-time payment
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Support Imajin',
+              description: 'One-time support for sovereign infrastructure development',
+            },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        }],
+        payment_intent_data: {
+          metadata,
+        },
+        success_url: `${BASE_URL}/success?type=onetime`,
+        cancel_url: BASE_URL,
+      });
+
+      return NextResponse.json({ url: session.url });
+    }
   } catch (error) {
     console.error('Checkout error:', error);
     return NextResponse.json(
