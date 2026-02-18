@@ -50,14 +50,9 @@ export async function POST(request: NextRequest) {
         subscription_data: {
           metadata,
         },
+        metadata, // Also on session for webhook access
         success_url: `${BASE_URL}/success?type=subscription`,
         cancel_url: BASE_URL,
-        // Collect email for mailing list
-        ...(joinMailingList && {
-          consent_collection: {
-            promotions: 'auto',
-          },
-        }),
       });
 
       return NextResponse.json({ url: session.url });
@@ -80,6 +75,7 @@ export async function POST(request: NextRequest) {
         payment_intent_data: {
           metadata,
         },
+        metadata, // Also on session for webhook access
         success_url: `${BASE_URL}/success?type=onetime`,
         cancel_url: BASE_URL,
       });
