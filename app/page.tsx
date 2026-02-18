@@ -102,7 +102,8 @@ export default function CoffeePage() {
             </p>
             
             <p>
-              But cash is now starting to get scarce.
+              But cash is now starting to get scarce. I'm currently spending about <strong>$45 USD per day</strong> on 
+              AI inference costs alone — and that's expected to rise as the scope of this project increases.
             </p>
             
             <p>
@@ -111,7 +112,7 @@ export default function CoffeePage() {
             </p>
             
             <p className="font-medium text-gray-800 dark:text-gray-100">
-              Please support me if you can. If you have the capacity.
+              Please support me if you can. If you have the capacity. Every bit helps.
             </p>
             
             <p>
