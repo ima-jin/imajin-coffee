@@ -78,6 +78,22 @@ export default function CoffeePage() {
           <p className="text-gray-500">Sovereign infrastructure. Built in public. Funded by you.</p>
         </div>
 
+        {/* The Thought */}
+        <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-2xl p-6 mb-6">
+          <h2 className="text-lg font-bold mb-3 text-orange-800 dark:text-orange-200">A thought on where your money goes</h2>
+          <div className="text-orange-900 dark:text-orange-100 space-y-3">
+            <p>
+              You probably spend $20/month on subscriptions you barely touch — feeding platforms 
+              that turn your attention into their product.
+            </p>
+            <p>
+              What if that money went to open source projects building the alternative? Infrastructure 
+              owned by people, not shareholders. Tools that undo the mess instead of profiting from it.
+            </p>
+            <p className="font-semibold">This is that.</p>
+          </div>
+        </div>
+
         {/* The Story */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
           <h2 className="text-xl font-bold mb-4">Why I Need Your Help</h2>
