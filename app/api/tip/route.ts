@@ -4,9 +4,19 @@ import { extractToken, validateToken } from '@/lib/auth';
 import { jsonResponse, errorResponse, generateId } from '@/lib/utils';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
+// Lazy Stripe init to avoid build-time errors
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('STRIPE_SECRET_KEY not configured');
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
+  }
+  return _stripe;
+}
 
 /**
  * POST /api/tip - Send a tip
@@ -81,7 +91,7 @@ export async function POST(request: NextRequest) {
       // Create Stripe Payment Intent
       const stripeAccountId = methods.stripe.accountId;
       
-      const paymentIntent = await stripe.paymentIntents.create({
+      const paymentIntent = await getStripe().paymentIntents.create({
         amount,
         currency: currency.toLowerCase(),
         automatic_payment_methods: { enabled: true },
